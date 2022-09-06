@@ -19,22 +19,22 @@ Parameters:
 
   DaskImage:
     Type: String
-    Default: daskdev/dask:latest
+    Default: daskdev/dask
     Description: Container image to use for the Dask workers before our custom image is built
 
   DaskWorkerCPU:
     Type: String
-    Default: '1024'
+    Default: '2048'
     Description: CPU units to assign to dask workers (1024 = 1 vCPU)
 
   DaskWorkerMemory:
     Type: String
-    Default: '8192'
+    Default: '16384'
     Description: Memory in MiB for dask workers
 
   DaskWorkerSpotPricing:
     Type: String
-    Default: 'NO'
+    Default: 'YES'
     Description: Use Fargate spot pricing for dask workers, to save money (workers may be terminated)
     AllowedValues:
       - 'YES'
@@ -53,7 +53,7 @@ Resources:
       InstanceTenancy: default
       Tags:
         - Key: Name
-          Value: dask-fargate/MyVpc
+          Value: cp-dask-fargate/CpVpc
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -67,7 +67,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: dask-fargate/PublicSubnet1
+          Value: cp-dask-fargate/CpPublicSubnet1
   PublicSubnet1RouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -75,14 +75,14 @@ Resources:
         Ref: DaskVpc
       Tags:
         - Key: Name
-          Value: dask-fargate/MyVpc/PublicSubnet1
+          Value: cp-dask-fargate/CpVpc/CpPublicSubnet1
   PublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId:
         Ref: PublicSubnet1RouteTable
       SubnetId:
-        Ref: PublicSubnet1
+        Ref: CpPublicSubnet1
   PublicSubnet1DefaultRoute:
     Type: AWS::EC2::Route
     Properties:
@@ -105,7 +105,7 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: dask-fargate/MyVpc
+          Value: cp-dask-fargate/CpVpc
   VPCGatewayA:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
@@ -130,7 +130,7 @@ Resources:
           - Fn::GetAZs: ""
       Tags:
         - Key: Name
-          Value: dask-fargate/PrivateSubnet1
+          Value: cp-dask-fargate/PrivateSubnet1
   PrivateSubnet1RouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -138,7 +138,7 @@ Resources:
         Ref: DaskVpc
       Tags:
         - Key: Name
-          Value: dask-fargate/MyVpc/PrivateSubnet1
+          Value: cp-dask-fargate/CpVpc/PrivateSubnet1
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -165,14 +165,14 @@ Resources:
   LogGroupScheduler:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /aws/${AWS::StackName}/dask/scheduler
+      LogGroupName: !Sub /aws/${AWS::StackName}/cpdask/scheduler
       RetentionInDays: 3
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
   LogGroupWorker:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub /aws/${AWS::StackName}/dask/worker
+      LogGroupName: !Sub /aws/${AWS::StackName}/cpdask/worker
       RetentionInDays: 3
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
@@ -224,18 +224,18 @@ Resources:
     Properties:
       ClusterName: !Join ["-", [!Ref "AWS::StackName", "Fargate-Dask-Cluster"]]
       CapacityProviders:
-        - FARGATE
         - FARGATE_SPOT
+        - FARGATE
       DefaultCapacityProviderStrategy:
-        - CapacityProvider: FARGATE
-          Weight: 1
         - CapacityProvider: FARGATE_SPOT
+          Weight: 1
+        - CapacityProvider: FARGATE
           Weight: 0
 
   DaskClusterPrivateNS:
     Type: AWS::ServiceDiscovery::PrivateDnsNamespace
     Properties:
-      Name: local-dask
+      Name: cp-dask
       Vpc:
         Ref: DaskVpc
 
@@ -282,15 +282,15 @@ Resources:
       ContainerDefinitions:
         - Command:
             - dask-worker
-            - dask-scheduler.local-dask:8786
+            - dask-scheduler.cp-dask:8786
             - --memory-limit
-            - '7000MB'
+            - '160000MB'
             - --worker-port
             - '9000'
             - --no-nanny
             - --no-dashboard
             - --death-timeout
-            - '30'
+            - '3600'
             - --nthreads
             - '2'
             - --nprocs
@@ -515,7 +515,7 @@ Resources:
                 source activate daskpy3
                 conda install -c conda micromamba -y 
                 micromamba install -c conda basemap proj4 nodejs ipywidgets -y 
-                pip install botocore==1.20.106 aiobotocore==1.4.1 zarr==2.9.5 rechunker==0.4.2 ipykernel==6.3.1 boto3==1.17.106 dask==2021.8.1 distributed==2021.8.1 tornado==6.1 cloudpickle==1.6.0 msgpack==1.0.2 blosc==1.10.2 numpy==1.21.2 pandas==1.3.2 lz4==3.1.3 netcdf4==1.5.7 xarray==0.19.0 bokeh==2.2.3 s3fs==2021.8.1 fsspec==2021.8.1 h5netcdf==0.11.0 h5py==3.4.0 intake-esm==2021.8.17 intake==0.6.3
+                pip install botocore==1.20.106 aiobotocore==1.4.1 zarr==2.9.5 pyarrow  tiledb rechunker==0.4.2 ipykernel==6.3.1 boto3==1.17.106 dask==2021.8.1 distributed==2021.8.1 tornado==6.1 cloudpickle==1.6.0 msgpack==1.0.2 blosc==1.10.2 numpy==1.21.2 pandas==1.3.2 lz4==3.1.3 netcdf4==1.5.7 xarray==0.19.0 bokeh==2.2.3 s3fs==2021.8.1 fsspec==2021.8.1 h5netcdf==0.11.0 h5py==3.4.0 intake-esm==2021.8.17 intake==0.6.3
                 python -m ipykernel install --user --name daskpy3 --display-name "conda_daskpy3"
                 echo "\$(date) Updating Jupyter config options"
                 cp ~/.jupyter/jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py.bak
