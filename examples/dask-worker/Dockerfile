@@ -17,7 +17,7 @@ RUN conda install --yes \
     xarray==0.19.0 \
     bokeh==2.2.3 \
 	pyarrow==9.0.0 \
-	tiledb==0.17.2 \
+	tiledb-py==0.17.2 \
     s3fs==2021.8.1 \
     fsspec==2021.8.1 \
     h5netcdf==0.11.0 \
