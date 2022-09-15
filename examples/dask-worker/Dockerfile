@@ -5,8 +5,9 @@ RUN chmod +x /usr/local/bin/dumb-init
 
 RUN conda install --yes \
 	-c conda-forge \
+	blosc==1.10.2 \
 	pyarrow \
-    python \
+    python==3.7.10 \
     python-blosc \
     dask \
     netcdf4 \
@@ -19,7 +20,7 @@ RUN conda install --yes \
 	distributed \
 	zarr \
 	bokeh \
-	cloudpickle \
+	cloudpickle\
     && find /opt/conda/ -type f,l -name '*.a' -delete \
     && find /opt/conda/ -type f,l -name '*.pyc' -delete \
     && find /opt/conda/ -type f,l -name '*.js.map' -delete \
