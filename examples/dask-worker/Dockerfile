@@ -6,7 +6,7 @@ RUN chmod +x /usr/local/bin/dumb-init
 RUN conda install --yes \
 	-c conda-forge \
 	pyarrow \
-    python==3.7.10 \
+    python \
     python-blosc \
     dask \
     netcdf4 \
