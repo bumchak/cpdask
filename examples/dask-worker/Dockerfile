@@ -5,7 +5,6 @@ RUN chmod +x /usr/local/bin/dumb-init
 
 RUN conda install --yes \
 	-c conda-forge \
-	blosc==1.10.2 \
 	pyarrow \
     python==3.7.10 \
     python-blosc \
