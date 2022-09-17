@@ -82,7 +82,7 @@ Resources:
       RouteTableId:
         Ref: PublicSubnet1RouteTable
       SubnetId:
-        Ref: CpPublicSubnet1
+        Ref: PublicSubnet1
   PublicSubnet1DefaultRoute:
     Type: AWS::EC2::Route
     Properties:
@@ -99,7 +99,7 @@ Resources:
       Domain: vpc
       Tags:
         - Key: Name
-          Value: dask-fargate/MyVpc/PublicSubnet1
+          Value: cp-dask-fargate/CpVpc/CpPublicSubnet1
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
@@ -295,7 +295,6 @@ Resources:
             - '2'
             - --nprocs
             - '1'
-            - --reconnect
           Cpu: !Ref DaskWorkerCPU
           Essential: true
           Image: !Ref DaskImage
@@ -511,11 +510,11 @@ Resources:
                 sleep 10
                 echo "\$(date) Creating daskpy3 conda environment"
                 echo "\$(date) Running in directory ${PWD}"
-                conda create --name daskpy3 python="3.7.10" -y
+                conda create --name daskpy3 python="3.10" -y
                 source activate daskpy3
                 conda install -c conda micromamba -y 
-                micromamba install -c conda basemap proj4 nodejs ipywidgets -y 
-                pip install botocore==1.20.106 aiobotocore==1.4.1 zarr==2.9.5 pyarrow  tiledb rechunker==0.4.2 ipykernel==6.3.1 boto3==1.17.106 dask==2021.8.1 distributed==2021.8.1 tornado==6.1 cloudpickle==1.6.0 msgpack==1.0.2 blosc==1.10.2 numpy==1.21.2 pandas==1.3.2 lz4==3.1.3 netcdf4==1.5.7 xarray==0.19.0 bokeh==2.2.3 s3fs==2021.8.1 fsspec==2021.8.1 h5netcdf==0.11.0 h5py==3.4.0 intake-esm==2021.8.17 intake==0.6.3
+                micromamba install -c conda proj4 nodejs ipywidgets -y 
+                pip install botocore==1.20.106 aiobotocore==1.4.1 zarr==2.9.5 pyarrow==9.0.0  tiledb==0.17.3 rechunker==0.4.2 ipykernel==6.3.1 boto3==1.17.106 dask==2022.6.0 distributed==2022.6.0 tornado==6.2 cloudpickle==2.2.0 msgpack==1.0.4 blosc==1.10.2 numpy==1.23.3 pandas==1.4.4 lz4==4.0.0 xarray==0.19.0 bokeh==2.4.3 s3fs==2021.8.1 fsspec==2021.8.1 netcdf4==1.6.1 h5py==3.7.0 h5netcdf===1.0.2 intake-esm==2021.8.17 intake==0.6.3
                 python -m ipykernel install --user --name daskpy3 --display-name "conda_daskpy3"
                 echo "\$(date) Updating Jupyter config options"
                 cp ~/.jupyter/jupyter_notebook_config.py ~/.jupyter/jupyter_notebook_config.py.bak
