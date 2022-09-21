@@ -9,13 +9,13 @@ RUN conda install --yes \
     python-blosc==1.10.2 \
     zarr==2.12.0 \
 	pyarrow==9.0.0 \  
-	boto3==1.24.74 \
 	dask==2022.6.0 \
 	distributed==2022.6.0 \
 	numpy==1.23.3 \
 	pandas==1.4.4 \
 	xarray==0.19.0 \
 	fsspec==2021.8.1 \
+	s3fs \
 	&& find /opt/conda/ -type f,l -name '*.a' -delete \
     && find /opt/conda/ -type f,l -name '*.pyc' -delete \
     && find /opt/conda/ -type f,l -name '*.js.map' -delete \
