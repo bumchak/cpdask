@@ -15,7 +15,7 @@ RUN conda install --yes \
 	pandas==1.4.4 \
 	xarray==0.19.0 \
 	fsspec==2021.8.1 \
-	s3fs==2022.8.2 \
+	s3fs \
 	&& find /opt/conda/ -type f,l -name '*.a' -delete \
     && find /opt/conda/ -type f,l -name '*.pyc' -delete \
     && find /opt/conda/ -type f,l -name '*.js.map' -delete \
