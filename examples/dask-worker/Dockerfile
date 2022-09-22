@@ -14,7 +14,7 @@ RUN conda install --yes \
 	numpy==1.23.3 \
 	pandas==1.4.4 \
 	xarray==0.19.0 \
-	fsspec==2021.8.1 \
+	fsspec \
 	s3fs \
 	&& find /opt/conda/ -type f,l -name '*.a' -delete \
     && find /opt/conda/ -type f,l -name '*.pyc' -delete \
