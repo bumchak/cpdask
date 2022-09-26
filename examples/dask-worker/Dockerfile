@@ -16,7 +16,6 @@ RUN conda install --yes \
 	xarray==0.19.0 \
 	fsspec \
 	s3fs \
-	triad \
 	graphviz \
 	&& find /opt/conda/ -type f,l -name '*.a' -delete \
     && find /opt/conda/ -type f,l -name '*.pyc' -delete \
