@@ -17,6 +17,8 @@ RUN conda install --yes \
 	fsspec \
 	s3fs \
 	triad \
+	graphviz \
+	ipycytoscape \
 	&& find /opt/conda/ -type f,l -name '*.a' -delete \
     && find /opt/conda/ -type f,l -name '*.pyc' -delete \
     && find /opt/conda/ -type f,l -name '*.js.map' -delete \
